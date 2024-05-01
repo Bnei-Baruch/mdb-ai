@@ -15,7 +15,7 @@ def handle_stt():
     if 'url' not in request.values and len(request.files) == 0:
         return Response('must send or file or url', status=422)
     if len(request.files) > 0:
-        res = stt_from_file(list(request.files)[0], lang)
+        res = stt_from_file(request.files.get("file"), lang)
     else:
         res = stt_from_url(request.values['url'], lang)
     if 'tr_only' in request.values:
