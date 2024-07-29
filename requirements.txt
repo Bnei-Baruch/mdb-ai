@@ -45,3 +45,6 @@ urllib3==2.2.1
 Werkzeug==3.0.2
 wget==3.2
 zipp==3.18.1
+
+psycopg2~=2.9.9
+python-dotenv~=1.0.1

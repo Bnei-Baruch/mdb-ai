@@ -4,6 +4,7 @@ from time import sleep
 from flask import Flask
 
 from stt.handlers import handle_stt
+from summarization.handlers import handle_summary
 from tt.handlers import handle_tt
 
 app = Flask(__name__)
@@ -39,6 +40,11 @@ def stt():
 @app.route('/tt', methods=['POST'])
 def tt():
     return handle_tt()
+
+
+@app.route('/sum', methods=['POST', 'GET'])
+def summary():
+    return handle_summary()
 
 
 try:
