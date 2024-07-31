@@ -8,15 +8,16 @@ import nltk
 
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
-# with open('dataset/dataset.txt') as f:
-#     ds_data = f.read().replace("\\n", " ").replace("  ", " ")
-# ds = Dataset.from_list(json.loads(ds_data))
-# ds.set_format(type="torch", columns=["article", "summary"])
 #
-# ds = ds.train_test_split(test_size=0.2)
+with open('dataset/dataset.txt') as f:
+    ds_data = f.read().replace("\\n", " ").replace("\\t", " ").replace("  ", " ")
+    d = [x for x in json.loads(ds_data) if x["article"] is not None]
+    ds = Dataset.from_list(d)
+    ds.set_format(type="torch", columns=["article", "summary"])
+    ds = ds.train_test_split(test_size=0.2)
 
-ds = load_dataset("billsum", split="ca_test")
-ds = ds.train_test_split(test_size=0.2)
+# ds = load_dataset("billsum", split="ca_test")
+# ds = ds.train_test_split(test_size=0.2)
 
 from transformers import AutoTokenizer
 
@@ -45,8 +46,14 @@ prefix = "summarize: "
 
 
 def preprocess_function(examples):
-    inputs = [prefix + doc for doc in examples["text"]]
-    model_inputs = tokenizer(inputs, max_length=1024, truncation=True)
+    i = 0
+    for ex in examples["article"]:
+        if ex is None:
+            print(f"article not found {examples['summary'][i]} , {i}")
+        i += 1
+
+    inputs = [prefix + txt for txt in examples["article"]]
+    model_inputs = tokenizer(inputs, max_length=512, truncation=True)
 
     labels = tokenizer(text_target=examples["summary"], max_length=128, truncation=True)
 
@@ -55,7 +62,7 @@ def preprocess_function(examples):
 
 
 tokenized_datasets = ds.map(preprocess_function, batched=True)
-
+print("tokenize of dataset was ended")
 import evaluate
 
 rouge_score = evaluate.load("rouge")
@@ -76,8 +83,7 @@ args = Seq2SeqTrainingArguments(
     save_total_limit=3,
     num_train_epochs=num_train_epochs,
     predict_with_generate=True,
-    logging_steps=logging_steps,
-    push_to_hub=True,
+    logging_steps=logging_steps
 )
 
 import numpy as np
@@ -119,7 +125,7 @@ trainer = Seq2SeqTrainer(
     model,
     args,
     train_dataset=tokenized_datasets["train"],
-    eval_dataset=tokenized_datasets["validation"],
+    # eval_dataset=tokenized_datasets["validation"],
     data_collator=data_collator,
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
