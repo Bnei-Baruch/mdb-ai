@@ -8,20 +8,15 @@ import nltk
 
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
-with open('dataset/dataset.txt') as f:
-    ds_data = f.read()
-ds = Dataset.from_dict(json.loads(ds_data)).train_test_split(test_size=0.2)
+# with open('dataset/dataset.txt') as f:
+#     ds_data = f.read().replace("\\n", " ").replace("  ", " ")
+# ds = Dataset.from_list(json.loads(ds_data))
+# ds.set_format(type="torch", columns=["article", "summary"])
+#
+# ds = ds.train_test_split(test_size=0.2)
 
-
-# english_dataset = load_dataset("amazon_reviews_multi", "en")
-
-
-def filter_books(example):
-    return (
-            example["product_category"] == "book"
-            or example["product_category"] == "digital_ebook_purchase"
-    )
-
+ds = load_dataset("billsum", split="ca_test")
+ds = ds.train_test_split(test_size=0.2)
 
 from transformers import AutoTokenizer
 
@@ -37,12 +32,24 @@ from transformers import Seq2SeqTrainingArguments
 max_input_length = 512
 max_target_length = 30
 
+# def preprocess_function(examples):
+#     print(examples)
+#     model_inputs = tokenizer(examples["article"], max_length=max_input_length, truncation=True)
+#     labels = tokenizer(
+#         examples["summary"], max_length=max_target_length, truncation=True
+#     )
+#     model_inputs["labels"] = labels["input_ids"]
+#     return model_inputs
+
+prefix = "summarize: "
+
 
 def preprocess_function(examples):
-    model_inputs = tokenizer(examples["article"], max_length=max_input_length, truncation=True)
-    labels = tokenizer(
-        examples["summary"], max_length=max_target_length, truncation=True
-    )
+    inputs = [prefix + doc for doc in examples["text"]]
+    model_inputs = tokenizer(inputs, max_length=1024, truncation=True)
+
+    labels = tokenizer(text_target=examples["summary"], max_length=128, truncation=True)
+
     model_inputs["labels"] = labels["input_ids"]
     return model_inputs
 
