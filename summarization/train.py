@@ -8,23 +8,6 @@ import nltk
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
 english_dataset = load_dataset("amazon_reviews_multi", "en")
-DatasetDict({
-    train: Dataset({
-        features: ['review_id', 'product_id', 'reviewer_id', 'stars', 'review_body', 'review_title', 'language',
-                   'product_category'],
-        num_rows: 200000
-    })
-    validation: Dataset({
-        features: ['review_id', 'product_id', 'reviewer_id', 'stars', 'review_body', 'review_title', 'language',
-                   'product_category'],
-        num_rows: 5000
-    })
-    test: Dataset({
-        features: ['review_id', 'product_id', 'reviewer_id', 'stars', 'review_body', 'review_title', 'language',
-                   'product_category'],
-        num_rows: 5000
-    })
-})
 
 
 def filter_books(example):
