@@ -27,20 +27,23 @@ tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 from transformers import AutoModelForSeq2SeqLM
 
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint)
+from peft import LoraConfig, get_peft_model
+
+config = LoraConfig(
+    r=8,
+    lora_alpha=16,
+    target_modules=["query_key_value"],
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM"
+)
+
+model = get_peft_model(model, config)
 
 from transformers import Seq2SeqTrainingArguments
 
 max_input_length = 512
 max_target_length = 30
-
-# def preprocess_function(examples):
-#     print(examples)
-#     model_inputs = tokenizer(examples["article"], max_length=max_input_length, truncation=True)
-#     labels = tokenizer(
-#         examples["summary"], max_length=max_target_length, truncation=True
-#     )
-#     model_inputs["labels"] = labels["input_ids"]
-#     return model_inputs
 
 prefix = "summarize: "
 
@@ -74,16 +77,16 @@ logging_steps = len(tokenized_datasets["train"]) // batch_size
 model_name = model_checkpoint.split("/")[-1]
 
 args = Seq2SeqTrainingArguments(
-    output_dir="summary_29-07",
-    evaluation_strategy="epoch",
-    learning_rate=5.6e-5,
-    per_device_train_batch_size=batch_size,
-    per_device_eval_batch_size=batch_size,
+    output_dir="summ_he",
+    learning_rate=2e-5,
+    per_device_train_batch_size=16,
+    per_device_eval_batch_size=16,
     weight_decay=0.01,
     save_total_limit=3,
-    num_train_epochs=num_train_epochs,
+    num_train_epochs=4,
     predict_with_generate=True,
-    logging_steps=logging_steps
+    fp16=True,
+    push_to_hub=True,
 )
 
 import numpy as np
@@ -125,7 +128,7 @@ trainer = Seq2SeqTrainer(
     model,
     args,
     train_dataset=tokenized_datasets["train"],
-    # eval_dataset=tokenized_datasets["validation"],
+    eval_dataset=tokenized_datasets["test"],
     data_collator=data_collator,
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
