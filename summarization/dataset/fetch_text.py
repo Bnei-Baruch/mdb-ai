@@ -1,6 +1,9 @@
 import csv
+import json
 import os
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
+
+from bs4 import BeautifulSoup
 
 
 class TextDataset:
@@ -22,14 +25,14 @@ class TextDataset:
         self.save_dataset()
 
     def save_dataset(self):
-        with open("dataset.txt", 'w') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=['article', 'summary'])
-            writer.writeheader()
-            writer.writerows(self.ds)
+        with open("dataset.txt", 'w', encoding='utf8') as f:
+            f.write(json.dumps(self.ds, ensure_ascii=False))
         print("Saved dataset")
 
 
 def fetch_file(uid):
     url = f"{os.getenv('LINKER_URL')}/{uid}"
-    print(f"Fetching file {url}")
-    return urlopen(url).read()
+    req = Request(url, headers={'Content-Type': 'text/html'})
+    html = urlopen(req).read()
+    txt = BeautifulSoup(html, 'html.parser')
+    return txt.string

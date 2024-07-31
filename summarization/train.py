@@ -1,13 +1,19 @@
-#pip install datasets evaluate transformers[sentencepiece]
-#pip install accelerate
-#pip install rouge_score
-#pip install nltk
+# pip install datasets evaluate transformers[sentencepiece]
+# pip install accelerate
+# pip install rouge_score
+# pip install nltk
+import json
 
 import nltk
 
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
-english_dataset = load_dataset("amazon_reviews_multi", "en")
+with open('dataset/dataset.txt') as f:
+    ds_data = f.read()
+ds = Dataset.from_dict(json.loads(ds_data)).train_test_split(test_size=0.2)
+
+
+# english_dataset = load_dataset("amazon_reviews_multi", "en")
 
 
 def filter_books(example):
@@ -16,8 +22,6 @@ def filter_books(example):
             or example["product_category"] == "digital_ebook_purchase"
     )
 
-
-english_books = english_dataset.filter(filter_books)
 
 from transformers import AutoTokenizer
 
@@ -35,19 +39,15 @@ max_target_length = 30
 
 
 def preprocess_function(examples):
-    model_inputs = tokenizer(
-        examples["review_body"],
-        max_length=max_input_length,
-        truncation=True,
-    )
+    model_inputs = tokenizer(examples["article"], max_length=max_input_length, truncation=True)
     labels = tokenizer(
-        examples["review_title"], max_length=max_target_length, truncation=True
+        examples["summary"], max_length=max_target_length, truncation=True
     )
     model_inputs["labels"] = labels["input_ids"]
     return model_inputs
 
 
-tokenized_datasets = books_dataset.map(preprocess_function, batched=True)
+tokenized_datasets = ds.map(preprocess_function, batched=True)
 
 import evaluate
 
@@ -101,9 +101,7 @@ from transformers import DataCollatorForSeq2Seq
 
 data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
 
-tokenized_datasets = tokenized_datasets.remove_columns(
-    books_dataset["train"].column_names
-)
+tokenized_datasets = tokenized_datasets.remove_columns(ds["train"].column_names)
 
 features = [tokenized_datasets["train"][i] for i in range(2)]
 data_collator(features)
