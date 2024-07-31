@@ -1,7 +1,7 @@
-pip install datasets evaluate transformers[sentencepiece]
-pip install accelerate
-pip install rouge_score
-pip install nltk
+#pip install datasets evaluate transformers[sentencepiece]
+#pip install accelerate
+#pip install rouge_score
+#pip install nltk
 
 import nltk
 
