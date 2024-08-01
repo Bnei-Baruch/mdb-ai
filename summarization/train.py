@@ -93,7 +93,7 @@ args = Seq2SeqTrainingArguments(
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
-
+nltk.download('punkt')
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
     # Decode generated summaries into text
