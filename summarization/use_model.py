@@ -122,7 +122,7 @@ text = """
 
 
 def run_summarization(t):
-    summarizer = pipeline("summarization", model="./summ_he")
+    summarizer = pipeline("summarization", model="./summ_he/checkpoint-268")
     summ = summarizer(f"summarize: {t}")
     print(summ[0].summary_text)
 
