@@ -110,7 +110,7 @@ def compute_metrics(eval_pred):
         predictions=decoded_preds, references=decoded_labels, use_stemmer=True
     )
     # Extract the median scores
-    result = {key: value.mid.fmeasure * 100 for key, value in result.items()}
+    result = {key: value * 100 for key, value in result.items()}
     return {k: round(v, 4) for k, v in result.items()}
 
 
