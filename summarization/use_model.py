@@ -4,7 +4,7 @@ text = "summarize: The Inflation Reduction Act lowers prescription drug costs, h
 
 
 def run_summarization(t):
-    summarizer = pipeline("summarization", model="./summarization/summ_he")
+    summarizer = pipeline("summarization", model="./summ_he")
     summ = summarizer(t)
     print(summ)
 
