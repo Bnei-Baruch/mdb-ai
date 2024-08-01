@@ -88,7 +88,6 @@ args = Seq2SeqTrainingArguments(
     num_train_epochs=4,
     predict_with_generate=True,
     fp16=True,
-    push_to_hub=True,
 )
 
 import numpy as np
