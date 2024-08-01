@@ -5,6 +5,7 @@
 import json
 
 import nltk
+import torch
 
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
@@ -19,26 +20,27 @@ with open('dataset/dataset.txt') as f:
 # ds = load_dataset("billsum", split="ca_test")
 # ds = ds.train_test_split(test_size=0.2)
 
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-model_checkpoint = "google/mt5-small"
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+model_checkpoint = "google/flan-t5-small"
+# model_checkpoint = "./models/mt5-small"
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
-from transformers import AutoModelForSeq2SeqLM
-
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint)
-from peft import LoraConfig, get_peft_model
+from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_training
 
 config = LoraConfig(
-    r=8,
-    lora_alpha=16,
-    target_modules=["query_key_value"],
+    r=16,
+    lora_alpha=32,
+    target_modules=["q", "v"],
     lora_dropout=0.05,
     bias="none",
-    task_type="CAUSAL_LM"
+    task_type=TaskType.SEQ_2_SEQ_LM
 )
 
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
+model = prepare_model_for_int8_training(model)
 model = get_peft_model(model, config)
+model.print_trainable_parameters()
 
 from transformers import Seq2SeqTrainingArguments
 
