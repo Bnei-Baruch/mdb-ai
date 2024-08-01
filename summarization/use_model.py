@@ -14,9 +14,17 @@ text = """
 
 
 def run_summarization(t):
-    summarizer = pipeline("summarization", model="./summ_he/checkpoint-268")
-    summ = summarizer(f"summarize: {t}")
-    print(summ)
+    from transformers import T5Tokenizer, T5ForConditionalGeneration
+
+    tokenizer = T5Tokenizer.from_pretrained("./summ_he/checkpoint-268")
+    model = T5ForConditionalGeneration.from_pretrained("./summ_he/checkpoint-268")
+
+    prefix = "summarize:"
+    input_text = f"{prefix} t"
+    input_ids = tokenizer(input_text, return_tensors="pt").input_ids
+
+    outputs = model.generate(input_ids)
+    print(tokenizer.decode(outputs[0]))
 
 
 run_summarization(text)
