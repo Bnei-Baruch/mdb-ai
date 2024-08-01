@@ -25,7 +25,7 @@ class TextDataset:
         self.save_dataset()
 
     def save_dataset(self):
-        with open("dataset.txt", 'w', encoding='utf8') as f:
+        with open("../models/dataset.txt", 'w', encoding='utf8') as f:
             f.write(json.dumps(self.ds, ensure_ascii=False))
         print("Saved dataset")
 

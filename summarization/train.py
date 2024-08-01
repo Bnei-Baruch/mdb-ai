@@ -10,7 +10,7 @@ import torch
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 
 #
-with open('dataset/dataset.txt') as f:
+with open('models/dataset.txt') as f:
     ds_data = f.read().replace("\\n", " ").replace("\\t", " ").replace("  ", " ")
     d = [x for x in json.loads(ds_data) if x["article"] is not None]
     ds = Dataset.from_list(d)
