@@ -8,6 +8,7 @@ import nltk
 import torch
 
 from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
+from transformers.utils.quantization_config import QuantizationMethod
 
 #
 with open('models/dataset.txt') as f:
@@ -20,27 +21,36 @@ with open('models/dataset.txt') as f:
 # ds = load_dataset("billsum", split="ca_test")
 # ds = ds.train_test_split(test_size=0.2)
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, BitsAndBytesConfig, AutoModelForCausalLM
 
 model_checkpoint = "google/flan-t5-small"
 # model_checkpoint = "./models/mt5-small"
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
-from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_int8_training
+from peft import LoraConfig, get_peft_model, TaskType
 
-config = LoraConfig(
+l_config = LoraConfig(
     r=16,
     lora_alpha=32,
     target_modules=["q", "v"],
     lora_dropout=0.05,
     bias="none",
-    task_type=TaskType.SEQ_2_SEQ_LM
+    task_type=TaskType.SEQ_2_SEQ_LM,
+)
+q_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_compute_dtype=torch.bfloat16,
+    quant_method=QuantizationMethod.BITS_AND_BYTES,
+    lora_config=l_config
 )
 
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
-model = prepare_model_for_int8_training(model)
-model = get_peft_model(model, config)
-model.print_trainable_parameters()
+# model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
+# model = prepare_model_for_int8_training(model)
+# model = get_peft_model(model, config)
+# model.print_trainable_parameters()
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
 
 from transformers import Seq2SeqTrainingArguments
 
@@ -76,7 +86,6 @@ batch_size = 8
 num_train_epochs = 8
 # Show the training loss with every epoch
 logging_steps = len(tokenized_datasets["train"]) // batch_size
-model_name = model_checkpoint.split("/")[-1]
 
 args = Seq2SeqTrainingArguments(
     output_dir="summ_he",
@@ -94,6 +103,8 @@ import numpy as np
 from nltk.tokenize import sent_tokenize
 
 nltk.download('punkt')
+
+
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
     # Decode generated summaries into text

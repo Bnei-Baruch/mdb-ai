@@ -12,10 +12,10 @@ text = """
 "כמו שלעור לא יושג צבעים ולסריס אהבת המין כן החסר הצורך נפשי א"א לצייר לו הצורך הזה. אמנם צורך מחויב הוא."
 """
 
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+
 
 def run_summarization(t):
-    from transformers import T5Tokenizer, T5ForConditionalGeneration
-
     tokenizer = T5Tokenizer.from_pretrained("./summ_he/checkpoint-268")
     model = T5ForConditionalGeneration.from_pretrained("./summ_he/checkpoint-268")
 
