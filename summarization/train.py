@@ -123,7 +123,13 @@ def compute_metrics(eval_pred):
 
 from transformers import DataCollatorForSeq2Seq
 
-data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
+label_pad_token_id = -100
+data_collator = DataCollatorForSeq2Seq(
+    tokenizer,
+    model=model,
+    label_pad_token_id=label_pad_token_id,
+    pad_to_multiple_of=8
+)
 
 tokenized_datasets = tokenized_datasets.remove_columns(ds["train"].column_names)
 
@@ -134,6 +140,7 @@ from transformers import Seq2SeqTrainer
 
 args = Seq2SeqTrainingArguments(
     output_dir="summ_he",
+    auto_find_batch_size=True,
     learning_rate=2e-5,
     per_device_train_batch_size=16,
     per_device_eval_batch_size=16,
@@ -153,5 +160,7 @@ trainer = Seq2SeqTrainer(
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
 )
+model.config.use_cache = False
+
 trainer.train()
 trainer.evaluate()
