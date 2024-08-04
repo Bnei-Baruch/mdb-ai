@@ -11,6 +11,9 @@ from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
 from transformers.utils.quantization_config import QuantizationMethod
 
 #
+
+torch.cuda.empty_cache()
+
 with open('models/dataset.txt') as f:
     ds_data = f.read().replace("\\n", " ").replace("\\t", " ").replace("  ", " ")
     d = [x for x in json.loads(ds_data) if x["article"] is not None]
