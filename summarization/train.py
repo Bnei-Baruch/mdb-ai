@@ -30,9 +30,9 @@ model_checkpoint = "google/flan-t5-small"
 # model_checkpoint = "./models/mt5-small"
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
-from peft import LoraConfig, get_peft_model, TaskType
+from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
-l_config = LoraConfig(
+lora_config = LoraConfig(
     r=16,
     lora_alpha=32,
     target_modules=["q", "v"],
@@ -46,8 +46,12 @@ q_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True,
     bnb_4bit_compute_dtype=torch.bfloat16,
     quant_method=QuantizationMethod.BITS_AND_BYTES,
-    lora_config=l_config
+    lora_config=lora_config
 )
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
+model = prepare_model_for_kbit_training(model)
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
 
 # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 # model = prepare_model_for_int8_training(model)
