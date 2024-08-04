@@ -134,9 +134,9 @@ tokenized_datasets = tokenized_datasets.remove_columns(ds["train"].column_names)
 features = [tokenized_datasets["train"][i] for i in range(2)]
 data_collator(features)
 
-from transformers import Seq2SeqTrainer
+from transformers import Seq2SeqTrainer, Trainer
 
-trainer = Seq2SeqTrainer(
+trainer = Trainer(
     model,
     args,
     train_dataset=tokenized_datasets["train"],
