@@ -57,12 +57,8 @@ model.print_trainable_parameters()
 # model = prepare_model_for_int8_training(model)
 # model = get_peft_model(model, config)
 # model.print_trainable_parameters()
-model = AutoModelForSeq2SeqLM.from_pretrained(
-    model_checkpoint,
-    load_in_8bit=True,
-    device_map="auto"
-)
-model = get_peft_model(model, l_config)
+# model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
+# model = get_peft_model(model, lora_config)
 
 from transformers import Seq2SeqTrainingArguments
 
