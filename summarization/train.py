@@ -51,6 +51,7 @@ q_config = BitsAndBytesConfig(
 # model = get_peft_model(model, config)
 # model.print_trainable_parameters()
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+model = get_peft_model(model)
 
 from transformers import Seq2SeqTrainingArguments
 
