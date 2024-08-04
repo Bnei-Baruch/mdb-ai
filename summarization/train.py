@@ -88,17 +88,6 @@ num_train_epochs = 8
 # Show the training loss with every epoch
 logging_steps = len(tokenized_datasets["train"]) // batch_size
 
-args = Seq2SeqTrainingArguments(
-    output_dir="summ_he",
-    learning_rate=2e-5,
-    per_device_train_batch_size=16,
-    per_device_eval_batch_size=16,
-    weight_decay=0.01,
-    save_total_limit=3,
-    num_train_epochs=4,
-    predict_with_generate=True,
-    fp16=True,
-)
 
 import numpy as np
 from nltk.tokenize import sent_tokenize
@@ -135,9 +124,21 @@ tokenized_datasets = tokenized_datasets.remove_columns(ds["train"].column_names)
 features = [tokenized_datasets["train"][i] for i in range(2)]
 data_collator(features)
 
-from transformers import Seq2SeqTrainer, Trainer
+from transformers import Seq2SeqTrainer
 
-trainer = Trainer(
+args = Seq2SeqTrainingArguments(
+    output_dir="summ_he",
+    learning_rate=2e-5,
+    per_device_train_batch_size=16,
+    per_device_eval_batch_size=16,
+    weight_decay=0.01,
+    save_total_limit=3,
+    num_train_epochs=4,
+    predict_with_generate=True,
+    fp16=True,
+)
+
+trainer = Seq2SeqTrainer(
     model,
     args,
     train_dataset=tokenized_datasets["train"],
