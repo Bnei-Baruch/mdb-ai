@@ -1,5 +1,7 @@
 from transformers import pipeline
 
+from summarization.train import model_checkpoint
+
 text = """
 חלק ג', קטע ב', כותרת "העקרון הדתי, מתוך שלא לשמה בא לשמה"
 
@@ -18,6 +20,8 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 def run_summarization(t):
     tokenizer = T5Tokenizer.from_pretrained("./summ_he/checkpoint-268")
     model = T5ForConditionalGeneration.from_pretrained("./summ_he/checkpoint-268")
+    model_base = T5ForConditionalGeneration.from_pretrained(model_checkpoint)
+    print(model_base.parameters())
 
     prefix = "summarize:"
     input_text = f"{prefix} t"
