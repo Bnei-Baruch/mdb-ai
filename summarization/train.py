@@ -28,8 +28,8 @@ with open('models/dataset.txt') as f:
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, BitsAndBytesConfig, AutoModelForCausalLM, \
     TrainingArguments
 
-model_checkpoint = "google/flan-t5-small"
-# model_checkpoint = "./models/mt5-small"
+# model_checkpoint = "google/flan-t5-small"
+model_checkpoint = "google/mt5-small"
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
