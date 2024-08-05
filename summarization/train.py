@@ -34,14 +34,14 @@ tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, d
 
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
 
-# lora_config = LoraConfig(
-#     r=16,
-#     lora_alpha=32,
-#     target_modules=["q", "v"],
-#     lora_dropout=0.05,
-#     bias="none",
-#     task_type=TaskType.SEQ_2_SEQ_LM,
-# )
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    target_modules=["q", "v"],
+    lora_dropout=0.05,
+    bias="none",
+    task_type=TaskType.SEQ_2_SEQ_LM,
+)
 # q_config = BitsAndBytesConfig(
 #     load_in_4bit=True,
 #     bnb_4bit_quant_type="nf4",
@@ -56,15 +56,17 @@ from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_tr
 # model.print_trainable_parameters()
 
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
-config = LoRAConfig(
-    r=8,
-    alpha=16,
-    # use it on all of the layers
-    intermediate_lora=True,
-    output_lora=True
-)
+# config = LoRAConfig(
+#     r=8,
+#     alpha=16,
+#     # use it on all of the layers
+#     intermediate_lora=True,
+#     output_lora=True
+# )
+
+
 adapter_name_he = "summ_he"
-model.add_adapter(config, adapter_name=adapter_name_he)
+model.add_adapter(lora_config, adapter_name=adapter_name_he)
 model.train_adapter(adapter_name_he)
 model.set_active_adapters([adapter_name_he])
 
