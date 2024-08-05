@@ -28,8 +28,8 @@ with open('models/dataset.txt') as f:
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, BitsAndBytesConfig, AutoModelForCausalLM, \
     TrainingArguments
 
-model_checkpoint = "google/flan-t5-small"
-# model_checkpoint = "google/mt5-small"
+# model_checkpoint = "google/flan-t5-small"
+model_checkpoint = "google/mt5-small"
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
@@ -57,19 +57,20 @@ lora_config = LoraConfig(
 # model.print_trainable_parameters()
 
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
-# config = LoRAConfig(
-#     r=8,
-#     alpha=16,
-#     # use it on all of the layers
-#     intermediate_lora=True,
-#     output_lora=True
-# )
+config = LoRAConfig(
+    r=8,
+    alpha=16,
+    intermediate_lora=True,
+    output_lora=True
+)
+model = prepare_model_for_kbit_training(model)
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
 
-
-adapter_name_he = "summ_he"
-model.add_adapter(lora_config, adapter_name=adapter_name_he)
-model.train_adapter(adapter_name_he)
-model.set_active_adapters([adapter_name_he])
+# adapter_name_he = "summ_he"
+# model.add_adapter(lora_config, adapter_name=adapter_name_he)
+# model.train_adapter(adapter_name_he)
+# model.set_active_adapters([adapter_name_he])
 
 from transformers import Seq2SeqTrainingArguments
 
