@@ -13,13 +13,13 @@ text = """
 "כמו שלעור לא יושג צבעים ולסריס אהבת המין כן החסר הצורך נפשי א"א לצייר לו הצורך הזה. אמנם צורך מחויב הוא."
 """
 
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+from transformers import T5Tokenizer, T5ForConditionalGeneration, MT5ForConditionalGeneration
 
 model_checkpoint_fine_tuned = "./summ_he/checkpoint-536"
 def run_summarization(t):
     tokenizer = T5Tokenizer.from_pretrained(model_checkpoint_fine_tuned)
     model = T5ForConditionalGeneration.from_pretrained(model_checkpoint_fine_tuned)
-    model_base = T5ForConditionalGeneration.from_pretrained("google/mt5-small")
+    model_base = MT5ForConditionalGeneration.from_pretrained("google/mt5-small")
     print(model_base.parameters())
 
     prefix = "summarize:"
