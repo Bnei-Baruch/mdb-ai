@@ -15,10 +15,10 @@ text = """
 
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-
+model_checkpoint_fine_tuned = "./summ_he/checkpoint-536"
 def run_summarization(t):
-    tokenizer = T5Tokenizer.from_pretrained("./summ_he/checkpoint-268")
-    model = T5ForConditionalGeneration.from_pretrained("./summ_he/checkpoint-268")
+    tokenizer = T5Tokenizer.from_pretrained(model_checkpoint_fine_tuned)
+    model = T5ForConditionalGeneration.from_pretrained(model_checkpoint_fine_tuned)
     model_base = T5ForConditionalGeneration.from_pretrained("google/mt5-small")
     print(model_base.parameters())
 
