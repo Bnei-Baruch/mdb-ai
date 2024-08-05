@@ -63,12 +63,10 @@ config = LoRAConfig(
     intermediate_lora=True,
     output_lora=True
 )
-
-# make a new adapter for the XSum dataset
-model.add_adapter("xsum", config=config)
-# enable the adapter for training
-model.train_adapter("xsum")
-model.set_active_adapters(["xsum"])
+adapter_name_he = "summ_he"
+model.add_adapter(config, adapter_name=adapter_name_he)
+model.train_adapter(adapter_name_he)
+model.set_active_adapters([adapter_name_he])
 
 from transformers import Seq2SeqTrainingArguments
 
