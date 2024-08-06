@@ -41,6 +41,7 @@ lora_config = LoraConfig(
     lora_dropout=0.05,
     bias="none",
     task_type=TaskType.SEQ_2_SEQ_LM,
+
 )
 q_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -56,18 +57,25 @@ q_config = BitsAndBytesConfig(
 # model.print_trainable_parameters()
 
 model = MT5ForConditionalGeneration.from_pretrained(model_checkpoint, quantization_config=q_config)
-config = LoRAConfig(
-    r=8,
-    alpha=16,
-    intermediate_lora=True,
-    output_lora=True
-)
+# freeze everything
+for param in model.parameters():
+    param.requires_grad = False
+
+# and Un-Freeze lower 4 layers of encoder
+for i in range(0, 4, 1):
+    for param in model.encoder.block[i].parameters():
+        param.requires_grad = True
+# config = LoRAConfig(
+#     r=8,
+#     alpha=16,
+#     intermediate_lora=True,
+#     output_lora=True
+# )
 
 # model = PeftModelForSeq2SeqLM(model, lora_config)
 model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, adapter_config=lora_config)
-# model.set_adapter(adapter_name_he)
 model.set_adapter(adapter_name_he)
 
 max_input_length = 2048
@@ -186,9 +194,7 @@ trainer = AdapterTrainer(
     eval_dataset=tokenized_datasets["test"],
 )
 model.config.use_cache = False
-for p in model.parameters():
-    print(f"param: {p.requires_grad}")
-    p.requires_grad = False
+
 print("start training...")
 trainer.train()
 print("start evaluating...")
