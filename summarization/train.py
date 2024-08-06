@@ -48,9 +48,7 @@ q_config = BitsAndBytesConfig(
     load_in_4bit=True,
     bnb_4bit_quant_type="nf4",
     bnb_4bit_use_double_quant=True,
-    bnb_4bit_compute_dtype=torch.bfloat16,
-    quant_method=QuantizationMethod.BITS_AND_BYTES,
-    low_cpu_mem_usage=True
+    bnb_4bit_compute_dtype=torch.bfloat16
 )
 # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
 # model = prepare_model_for_kbit_training(model)
