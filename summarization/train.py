@@ -68,7 +68,7 @@ model.print_trainable_parameters()
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, peft_config=lora_config)
 # model.set_adapter(adapter_name_he)
-model.active_adapters(adapter_name_he)
+model.set_adapter(adapter_name_he)
 
 max_input_length = 2048
 max_target_length = 50
