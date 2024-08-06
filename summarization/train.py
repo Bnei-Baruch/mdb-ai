@@ -34,7 +34,7 @@ model_checkpoint = "google/mt5-small"
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
 from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
-
+#
 lora_config = LoraConfig(
     r=16,
     lora_alpha=32,
@@ -50,26 +50,26 @@ q_config = BitsAndBytesConfig(
     bnb_4bit_compute_dtype=torch.bfloat16,
     quant_method=QuantizationMethod.BITS_AND_BYTES,
 )
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
-model = prepare_model_for_kbit_training(model)
-model = get_peft_model(model, lora_config)
-model.print_trainable_parameters()
-
-#model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
-# config = LoRAConfig(
-#     r=8,
-#     alpha=16,
-#     intermediate_lora=True,
-#     output_lora=True
-# )
+# model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
 # model = prepare_model_for_kbit_training(model)
 # model = get_peft_model(model, lora_config)
 # model.print_trainable_parameters()
 
-# adapter_name_he = "summ_he"
-# model.add_adapter(lora_config, adapter_name=adapter_name_he)
-# model.train_adapter(adapter_name_he)
-# model.set_active_adapters([adapter_name_he])
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+config = LoRAConfig(
+    r=8,
+    alpha=16,
+    intermediate_lora=True,
+    output_lora=True
+)
+model = prepare_model_for_kbit_training(model)
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+
+adapter_name_he = "summ_he"
+model.add_adapter(adapter_name=adapter_name_he, peft_config=lora_config)
+model.train_adapter(adapter_name_he)
+model.set_active_adapters([adapter_name_he])
 
 from transformers import Seq2SeqTrainingArguments
 
