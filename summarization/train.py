@@ -43,29 +43,29 @@ lora_config = LoraConfig(
     bias="none",
     task_type=TaskType.SEQ_2_SEQ_LM,
 )
-# q_config = BitsAndBytesConfig(
-#     load_in_4bit=True,
-#     bnb_4bit_quant_type="nf4",
-#     bnb_4bit_use_double_quant=True,
-#     bnb_4bit_compute_dtype=torch.bfloat16,
-#     quant_method=QuantizationMethod.BITS_AND_BYTES,
-#     lora_config=lora_config
-# )
+q_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",
+    bnb_4bit_use_double_quant=True,
+    bnb_4bit_compute_dtype=torch.bfloat16,
+    quant_method=QuantizationMethod.BITS_AND_BYTES,
+    lora_config=lora_config
+)
 # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 # model = prepare_model_for_kbit_training(model)
 # model = get_peft_model(model, lora_config)
 # model.print_trainable_parameters()
 
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
-config = LoRAConfig(
-    r=8,
-    alpha=16,
-    intermediate_lora=True,
-    output_lora=True
-)
-model = prepare_model_for_kbit_training(model)
-model = get_peft_model(model, lora_config)
-model.print_trainable_parameters()
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+# config = LoRAConfig(
+#     r=8,
+#     alpha=16,
+#     intermediate_lora=True,
+#     output_lora=True
+# )
+# model = prepare_model_for_kbit_training(model)
+# model = get_peft_model(model, lora_config)
+# model.print_trainable_parameters()
 
 # adapter_name_he = "summ_he"
 # model.add_adapter(lora_config, adapter_name=adapter_name_he)

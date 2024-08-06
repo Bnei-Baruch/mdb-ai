@@ -1,6 +1,5 @@
 from transformers import pipeline
 
-
 text = """
 חלק ג', קטע ב', כותרת "העקרון הדתי, מתוך שלא לשמה בא לשמה"
 
@@ -13,17 +12,17 @@ text = """
 "כמו שלעור לא יושג צבעים ולסריס אהבת המין כן החסר הצורך נפשי א"א לצייר לו הצורך הזה. אמנם צורך מחויב הוא."
 """
 
-from transformers import T5Tokenizer, T5ForConditionalGeneration, MT5ForConditionalGeneration
+from transformers import MT5Tokenizer, MT5ForConditionalGeneration, MT5ForConditionalGeneration
 
 model_checkpoint_fine_tuned = "./summ_he/checkpoint-536"
+
+
 def run_summarization(t):
-    tokenizer = T5Tokenizer.from_pretrained(model_checkpoint_fine_tuned)
-    model = T5ForConditionalGeneration.from_pretrained(model_checkpoint_fine_tuned)
-    model_base = MT5ForConditionalGeneration.from_pretrained("google/mt5-small")
-    print(model_base.parameters())
+    tokenizer = MT5Tokenizer.from_pretrained(model_checkpoint_fine_tuned)
+    model = MT5ForConditionalGeneration.from_pretrained(model_checkpoint_fine_tuned)
 
     prefix = "summarize:"
-    input_text = f"{prefix} t"
+    input_text = f"{prefix} {t}"
     input_ids = tokenizer(input_text, return_tensors="pt").input_ids
 
     outputs = model.generate(input_ids)
