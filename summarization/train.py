@@ -187,6 +187,7 @@ trainer = AdapterTrainer(
 )
 model.config.use_cache = False
 for p in model.parameters():
+    print(f"param: {p}")
     p.requires_grad = False
 print("start training...")
 trainer.train()
