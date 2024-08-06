@@ -6,7 +6,7 @@ import json
 
 import nltk
 import torch
-from adapters import AdapterTrainer
+from adapters import AdapterTrainer, Seq2SeqAdapterTrainer
 from datasets import Dataset
 from transformers.utils.quantization_config import QuantizationMethod
 
@@ -175,21 +175,23 @@ training_args = TrainingArguments(
     logging_steps=200,
     output_dir="./summ_he",
     overwrite_output_dir=True,
-    remove_unused_columns=False
+    remove_unused_columns=False,
 )
 
 # create the trainer
-trainer = AdapterTrainer(
+trainer = Seq2SeqAdapterTrainer(
     model=model,
     args=training_args,
     tokenizer=tokenizer,
     train_dataset=tokenized_datasets["train"],
     eval_dataset=tokenized_datasets["test"],
+    compute_metrics=compute_metrics,
 )
-model.train_adapter(adapter_name_he)
+#model.train_adapter(adapter_name_he)
 model.config.use_cache = False
 
-print("start training...")
+
+print("start training...", model)
 trainer.train()
 print("start evaluating...")
 trainer.evaluate()
