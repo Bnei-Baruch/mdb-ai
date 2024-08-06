@@ -55,7 +55,8 @@ q_config = BitsAndBytesConfig(
 # model = get_peft_model(model, lora_config)
 # model.print_trainable_parameters()
 
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+# model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint)
 
 # config = LoRAConfig(
 #     r=8,
@@ -65,10 +66,11 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_con
 # )
 
 # model = PeftModelForSeq2SeqLM(model, lora_config)
-model = prepare_model_for_kbit_training(model)
+# model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, adapter_config=lora_config)
-model.set_adapter(adapter_name_he)
+# model.set_adapter(adapter_name_he)
+model.active_adapters = adapter_name_he
 
 max_input_length = 2048
 max_target_length = 50
