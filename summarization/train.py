@@ -188,8 +188,8 @@ trainer = Seq2SeqAdapterTrainer(
     eval_dataset=tokenized_datasets["test"],
     compute_metrics=compute_metrics,
 )
-# model.train_adapter(adapter_name_he)
-model.config.use_cache = False
+model.train_adapter(adapter_name_he)
+# model.config.use_cache = False
 
 print("start training...", model)
 trainer.train()
