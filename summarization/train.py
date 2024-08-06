@@ -24,7 +24,8 @@ with open('models/dataset.txt') as f:
 # ds = load_dataset("billsum", split="ca_test")
 # ds = ds.train_test_split(test_size=0.2)
 
-from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, MT5PreTrainedModel, AutoModelForSeq2SeqLM
+from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, Seq2SeqTrainingArguments, \
+    AutoModelForSeq2SeqLM
 
 # model_checkpoint = "google/flan-t5-small"
 model_checkpoint = "google/mt5-small"
@@ -167,7 +168,7 @@ data_collator(features)
 # small batch size to fit in memory
 batch_size = 1
 
-training_args = TrainingArguments(
+training_args = Seq2SeqTrainingArguments(
     learning_rate=3e-4,
     num_train_epochs=1,
     per_device_train_batch_size=batch_size,
@@ -187,9 +188,8 @@ trainer = Seq2SeqAdapterTrainer(
     eval_dataset=tokenized_datasets["test"],
     compute_metrics=compute_metrics,
 )
-#model.train_adapter(adapter_name_he)
+# model.train_adapter(adapter_name_he)
 model.config.use_cache = False
-
 
 print("start training...", model)
 trainer.train()
