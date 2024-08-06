@@ -7,8 +7,7 @@ import json
 import nltk
 import torch
 from adapters import LoRAConfig, AdapterTrainer
-
-from datasets import load_dataset, concatenate_datasets, DatasetDict, Dataset
+from datasets import Dataset
 from transformers.utils.quantization_config import QuantizationMethod
 
 #
@@ -25,8 +24,7 @@ with open('models/dataset.txt') as f:
 # ds = load_dataset("billsum", split="ca_test")
 # ds = ds.train_test_split(test_size=0.2)
 
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, BitsAndBytesConfig, AutoModelForCausalLM, \
-    TrainingArguments
+from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, MT5ForConditionalGeneration
 
 # model_checkpoint = "google/flan-t5-small"
 model_checkpoint = "google/mt5-small"
@@ -56,7 +54,7 @@ q_config = BitsAndBytesConfig(
 # model = get_peft_model(model, lora_config)
 # model.print_trainable_parameters()
 
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+model = MT5ForConditionalGeneration.from_pretrained(model_checkpoint, quantization_config=q_config)
 config = LoRAConfig(
     r=8,
     alpha=16,
@@ -70,9 +68,7 @@ model.print_trainable_parameters()
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, peft_config=lora_config)
 # model.set_adapter(adapter_name_he)
-model.train_adapter(adapter_name_he)
-
-from transformers import Seq2SeqTrainingArguments
+model.active_adapters = adapter_name_he
 
 max_input_length = 2048
 max_target_length = 50
@@ -147,8 +143,6 @@ tokenized_datasets = tokenized_datasets.remove_columns(ds["train"].column_names)
 
 features = [tokenized_datasets["train"][i] for i in range(2)]
 data_collator(features)
-
-from transformers import Seq2SeqTrainer
 
 # args = Seq2SeqTrainingArguments(
 #     output_dir="summ_he",
