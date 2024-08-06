@@ -68,7 +68,6 @@ model.print_trainable_parameters()
 
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, peft_config=lora_config)
-model.train_adapter(adapter_name_he)
 model.set_active_adapters([adapter_name_he])
 
 from transformers import Seq2SeqTrainingArguments
