@@ -31,7 +31,7 @@ model_checkpoint = "google/mt5-small"
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
-from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
+from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training, PeftModelForSeq2SeqLM
 
 #
 lora_config = LoraConfig(
@@ -61,14 +61,14 @@ config = LoRAConfig(
     intermediate_lora=True,
     output_lora=True
 )
-model = prepare_model_for_kbit_training(model)
-model = get_peft_model(model, lora_config)
+
+model = PeftModelForSeq2SeqLM(model, lora_config)
 model.print_trainable_parameters()
 
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, peft_config=lora_config)
 # model.set_adapter(adapter_name_he)
-model.active_adapters = adapter_name_he
+model.active_adapters(adapter_name_he)
 
 max_input_length = 2048
 max_target_length = 50
