@@ -62,9 +62,8 @@ config = LoRAConfig(
     output_lora=True
 )
 
-model = PeftModelForSeq2SeqLM(model, lora_config)
-model.print_trainable_parameters()
-
+# model = PeftModelForSeq2SeqLM(model, lora_config)
+model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, peft_config=lora_config)
 # model.set_adapter(adapter_name_he)
