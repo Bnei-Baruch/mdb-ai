@@ -111,20 +111,16 @@ nltk.download('punkt')
 
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
-    # Decode generated summaries into text
+
     decoded_preds = tokenizer.batch_decode(predictions, skip_special_tokens=True)
-    # Replace -100 in the labels as we can't decode them
     labels = np.where(labels != -100, labels, tokenizer.pad_token_id)
-    # Decode reference summaries into text
     decoded_labels = tokenizer.batch_decode(labels, skip_special_tokens=True)
-    # ROUGE expects a newline after each sentence
     decoded_preds = ["\n".join(sent_tokenize(pred.strip())) for pred in decoded_preds]
     decoded_labels = ["\n".join(sent_tokenize(label.strip())) for label in decoded_labels]
-    # Compute ROUGE scores
+
     result = rouge_score.compute(
         predictions=decoded_preds, references=decoded_labels, use_stemmer=True
     )
-    # Extract the median scores
     result = {key: value * 100 for key, value in result.items()}
     return {k: round(v, 4) for k, v in result.items()}
 
@@ -176,7 +172,7 @@ training_args = TrainingArguments(
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     logging_steps=200,
-    output_dir="./training_output",
+    output_dir="./summ_he",
     overwrite_output_dir=True,
     remove_unused_columns=False
 )
@@ -190,6 +186,8 @@ trainer = AdapterTrainer(
     eval_dataset=tokenized_datasets["test"],
 )
 model.config.use_cache = False
+for p in model.parameters():
+    p.requires_grad = False
 
 trainer.train()
 trainer.evaluate()
