@@ -49,14 +49,13 @@ q_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True,
     bnb_4bit_compute_dtype=torch.bfloat16,
     quant_method=QuantizationMethod.BITS_AND_BYTES,
-    lora_config=lora_config
 )
-# model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
-# model = prepare_model_for_kbit_training(model)
-# model = get_peft_model(model, lora_config)
-# model.print_trainable_parameters()
-
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+model = prepare_model_for_kbit_training(model)
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+
+#model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
 # config = LoRAConfig(
 #     r=8,
 #     alpha=16,
