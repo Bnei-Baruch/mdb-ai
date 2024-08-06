@@ -48,6 +48,7 @@ q_config = BitsAndBytesConfig(
     bnb_4bit_use_double_quant=True,
     bnb_4bit_compute_dtype=torch.bfloat16,
     quant_method=QuantizationMethod.BITS_AND_BYTES,
+    low_cpu_mem_usage=True
 )
 # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
 # model = prepare_model_for_kbit_training(model)
@@ -65,7 +66,7 @@ config = LoRAConfig(
 # model = PeftModelForSeq2SeqLM(model, lora_config)
 model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
-model.add_adapter(adapter_name=adapter_name_he, peft_config=lora_config)
+model.add_adapter(adapter_name=adapter_name_he)
 # model.set_adapter(adapter_name_he)
 model.set_adapter(adapter_name_he)
 
