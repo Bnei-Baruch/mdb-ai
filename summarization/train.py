@@ -6,7 +6,7 @@ import json
 
 import nltk
 import torch
-from adapters import LoRAConfig, AdapterTrainer
+from adapters import AdapterTrainer
 from datasets import Dataset
 from transformers.utils.quantization_config import QuantizationMethod
 
@@ -24,14 +24,14 @@ with open('models/dataset.txt') as f:
 # ds = load_dataset("billsum", split="ca_test")
 # ds = ds.train_test_split(test_size=0.2)
 
-from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, MT5ForConditionalGeneration
+from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, MT5PreTrainedModel
 
 # model_checkpoint = "google/flan-t5-small"
 model_checkpoint = "google/mt5-small"
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
 
-from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training, PeftModelForSeq2SeqLM
+from peft import LoraConfig, TaskType, prepare_model_for_kbit_training
 
 #
 lora_config = LoraConfig(
@@ -56,7 +56,7 @@ q_config = BitsAndBytesConfig(
 # model = get_peft_model(model, lora_config)
 # model.print_trainable_parameters()
 
-model = MT5ForConditionalGeneration.from_pretrained(model_checkpoint, quantization_config=q_config)
+model = MT5PreTrainedModel.from_pretrained(model_checkpoint, quantization_config=q_config)
 
 # config = LoRAConfig(
 #     r=8,
