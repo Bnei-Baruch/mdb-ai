@@ -188,6 +188,7 @@ trainer = AdapterTrainer(
 model.config.use_cache = False
 for p in model.parameters():
     p.requires_grad = False
-
+print("start training...")
 trainer.train()
+print("start evaluating...")
 trainer.evaluate()
