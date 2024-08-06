@@ -24,7 +24,7 @@ with open('models/dataset.txt') as f:
 # ds = load_dataset("billsum", split="ca_test")
 # ds = ds.train_test_split(test_size=0.2)
 
-from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, MT5PreTrainedModel
+from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, MT5PreTrainedModel, AutoModelForSeq2SeqLM
 
 # model_checkpoint = "google/flan-t5-small"
 model_checkpoint = "google/mt5-small"
@@ -56,7 +56,7 @@ q_config = BitsAndBytesConfig(
 # model = get_peft_model(model, lora_config)
 # model.print_trainable_parameters()
 
-model = MT5PreTrainedModel.from_pretrained(model_checkpoint, quantization_config=q_config)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
 
 # config = LoRAConfig(
 #     r=8,
