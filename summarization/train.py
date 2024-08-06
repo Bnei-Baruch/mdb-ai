@@ -57,14 +57,7 @@ q_config = BitsAndBytesConfig(
 # model.print_trainable_parameters()
 
 model = MT5ForConditionalGeneration.from_pretrained(model_checkpoint, quantization_config=q_config)
-# freeze everything
-for param in model.parameters():
-    param.requires_grad = False
 
-# and Un-Freeze lower 4 layers of encoder
-for i in range(0, 4, 1):
-    for param in model.encoder.block[i].parameters():
-        param.requires_grad = True
 # config = LoRAConfig(
 #     r=8,
 #     alpha=16,
@@ -77,6 +70,14 @@ model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, adapter_config=lora_config)
 model.set_adapter(adapter_name_he)
+# freeze everything
+for param in model.parameters():
+    param.requires_grad = False
+
+# and Un-Freeze lower 4 layers of encoder
+for i in range(0, 4, 1):
+    for param in model.encoder.block[i].parameters():
+        param.requires_grad = True
 
 max_input_length = 2048
 max_target_length = 50
