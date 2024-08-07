@@ -6,9 +6,7 @@ import json
 
 import nltk
 import torch
-from adapters import AdapterTrainer, Seq2SeqAdapterTrainer
 from datasets import Dataset
-from transformers.utils.quantization_config import QuantizationMethod
 
 #
 
@@ -24,15 +22,15 @@ with open('models/dataset.txt') as f:
 # ds = load_dataset("billsum", split="ca_test")
 # ds = ds.train_test_split(test_size=0.2)
 
-from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, Seq2SeqTrainingArguments, \
-    AutoModelForSeq2SeqLM, AutoModel
+from transformers import AutoTokenizer, BitsAndBytesConfig, AutoModel, Seq2SeqTrainingArguments, \
+    Seq2SeqTrainer, AutoModelForSeq2SeqLM
 
 # model_checkpoint = "google/flan-t5-small"
 model_checkpoint = "google/mt5-small"
 
-tokenizer = AutoTokenizer.from_pretrained(model_checkpoint, load_in_8bit=True, device_map="auto")
+tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
-from peft import LoraConfig, TaskType, prepare_model_for_kbit_training
+from peft import LoraConfig, TaskType, prepare_model_for_kbit_training, get_peft_model
 
 #
 lora_config = LoraConfig(
@@ -41,7 +39,7 @@ lora_config = LoraConfig(
     target_modules=["q", "v"],
     lora_dropout=0.05,
     bias="none",
-    task_type=TaskType.CAUSAL_LM,
+    task_type=TaskType.SEQ_2_SEQ_LM,
 
 )
 q_config = BitsAndBytesConfig(
@@ -55,8 +53,7 @@ q_config = BitsAndBytesConfig(
 # model = get_peft_model(model, lora_config)
 # model.print_trainable_parameters()
 
-# model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
-model = AutoModel.from_pretrained(model_checkpoint)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
 
 # config = LoRAConfig(
 #     r=8,
@@ -65,11 +62,12 @@ model = AutoModel.from_pretrained(model_checkpoint)
 #     output_lora=True
 # )
 
-# model = PeftModelForSeq2SeqLM(model, lora_config)
-# model = prepare_model_for_kbit_training(model)
+# model = AutoPeftModelForSeq2SeqLM(model, config=lora_config)
+model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, adapter_config=lora_config)
-model.active_adapters = adapter_name_he
+model = get_peft_model(model.base_model, lora_config)
+# model.active_adapters = adapter_name_he
 
 max_input_length = 2048
 max_target_length = 50
@@ -168,7 +166,7 @@ data_collator(features)
 # small batch size to fit in memory
 batch_size = 1
 
-training_args = TrainingArguments(
+training_args = Seq2SeqTrainingArguments(
     learning_rate=3e-4,
     num_train_epochs=1,
     per_device_train_batch_size=batch_size,
@@ -179,8 +177,10 @@ training_args = TrainingArguments(
     remove_unused_columns=False,
 )
 
-# create the trainer
-trainer = AdapterTrainer(
+# for param in model.parameters():
+#     param.requires_grad = False
+
+trainer = Seq2SeqTrainer(
     model=model,
     args=training_args,
     tokenizer=tokenizer,
@@ -188,7 +188,8 @@ trainer = AdapterTrainer(
     eval_dataset=tokenized_datasets["test"],
     compute_metrics=compute_metrics,
 )
-model.train_adapter(adapter_name_he)
+
+# model.train_adapter(adapter_name_he)
 # model.config.use_cache = False
 
 print("start training...", model)
