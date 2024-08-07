@@ -190,7 +190,7 @@ trainer = Seq2SeqTrainer(
 )
 
 # model.train_adapter(adapter_name_he)
-# model.config.use_cache = False
+model.config.use_cache = False
 
 print("start training...", model)
 trainer.train()
