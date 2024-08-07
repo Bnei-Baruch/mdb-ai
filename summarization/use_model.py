@@ -1,25 +1,15 @@
-from transformers import pipeline
-
 text = """
-חלק ג', קטע ב', כותרת "העקרון הדתי, מתוך שלא לשמה בא לשמה"
-
-קריין: ספר "כתבי בעל הסולם", עמ' 848, "כתבי הדור האחרון", חלק ג', קטע ב', כותרת: "העקרון הדתי, מתוך שלא לשמה בא לשמה".
-
-העקרון הדתי, מתוך שלא לשמה בא לשמה
-"והכין ההשגחה הנהגת הבריות בדרך אגואיסטית שבהכרח תביאה לחורבן העולם אם לא יקבלו הדת להשפיע. וע"כ יש בה צורך פרגמטי. ומתוכה בא לשמה."
-
-מהו צורך נפשי
-"כמו שלעור לא יושג צבעים ולסריס אהבת המין כן החסר הצורך נפשי א"א לצייר לו הצורך הזה. אמנם צורך מחויב הוא."
+העקרון הדתי, מתוך שלא לשמה בא לשמה והכין ההשגחה הנהגת הבריות בדרך אגואיסטית שבהכרח תביאה לחורבן העולם אם לא יקבלו הדת להשפיע. וע"כ יש בה צורך פרגמטי. ומתוכה בא לשמה. מהו צורך נפשי כמו שלעור לא יושג צבעים ולסריס אהבת המין כן החסר הצורך נפשי א"א לצייר לו הצורך הזה. אמנם צורך מחויב הוא.
 """
 
-from transformers import MT5Tokenizer, MT5ForConditionalGeneration, MT5ForConditionalGeneration
+from transformers import MT5Tokenizer, AutoModelForSeq2SeqLM
 
-model_checkpoint_fine_tuned = "./summ_he/checkpoint-536"
+model_checkpoint_fine_tuned = "./summ_he/checkpoint-1000"
 
 
 def run_summarization(t):
     tokenizer = MT5Tokenizer.from_pretrained(model_checkpoint_fine_tuned)
-    model = MT5ForConditionalGeneration.from_pretrained(model_checkpoint_fine_tuned)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint_fine_tuned)
 
     prefix = "summarize:"
     input_text = f"{prefix} {t}"
