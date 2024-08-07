@@ -180,7 +180,7 @@ training_args = TrainingArguments(
 )
 
 # create the trainer
-trainer = Seq2SeqAdapterTrainer(
+trainer = AdapterTrainer(
     model=model,
     args=training_args,
     tokenizer=tokenizer,
