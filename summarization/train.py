@@ -25,7 +25,7 @@ with open('models/dataset.txt') as f:
 # ds = ds.train_test_split(test_size=0.2)
 
 from transformers import AutoTokenizer, BitsAndBytesConfig, TrainingArguments, Seq2SeqTrainingArguments, \
-    AutoModelForSeq2SeqLM
+    AutoModelForSeq2SeqLM, AutoModel
 
 # model_checkpoint = "google/flan-t5-small"
 model_checkpoint = "google/mt5-small"
@@ -41,7 +41,7 @@ lora_config = LoraConfig(
     target_modules=["q", "v"],
     lora_dropout=0.05,
     bias="none",
-    task_type=TaskType.SEQ_2_SEQ_LM,
+    task_type=TaskType.CAUSAL_LM,
 
 )
 q_config = BitsAndBytesConfig(
@@ -56,7 +56,7 @@ q_config = BitsAndBytesConfig(
 # model.print_trainable_parameters()
 
 # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint)
+model = AutoModel.from_pretrained(model_checkpoint)
 
 # config = LoRAConfig(
 #     r=8,
@@ -69,7 +69,6 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint)
 # model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, adapter_config=lora_config)
-# model.set_adapter(adapter_name_he)
 model.active_adapters = adapter_name_he
 
 max_input_length = 2048
@@ -127,10 +126,11 @@ def compute_metrics(eval_pred):
     return {k: round(v, 4) for k, v in result.items()}
 
 
-from transformers import DataCollatorForSeq2Seq
+# from transformers import DataCollatorForSeq2Seq
+from transformers import DataCollator
 
 label_pad_token_id = -100
-data_collator = DataCollatorForSeq2Seq(
+data_collator = DataCollator(
     tokenizer,
     model=model,
     label_pad_token_id=label_pad_token_id,
@@ -168,7 +168,7 @@ data_collator(features)
 # small batch size to fit in memory
 batch_size = 1
 
-training_args = Seq2SeqTrainingArguments(
+training_args = TrainingArguments(
     learning_rate=3e-4,
     num_train_epochs=1,
     per_device_train_batch_size=batch_size,
