@@ -195,4 +195,4 @@ model.config.use_cache = False
 print("start training...", model)
 trainer.train()
 print("start evaluating...")
-trainer.evaluate()
+#trainer.evaluate()
