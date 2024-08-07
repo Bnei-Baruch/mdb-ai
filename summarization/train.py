@@ -69,8 +69,8 @@ model.add_adapter(adapter_name=adapter_name_he, adapter_config=lora_config)
 model = get_peft_model(model.base_model, lora_config)
 # model.active_adapters = adapter_name_he
 
-max_input_length = 2048
-max_target_length = 50
+max_input_length = 4096
+max_target_length = 200
 
 prefix = "summarize: "
 
