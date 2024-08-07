@@ -26,7 +26,8 @@ from transformers import AutoTokenizer, BitsAndBytesConfig, AutoModel, Seq2SeqTr
     Seq2SeqTrainer, AutoModelForSeq2SeqLM
 
 # model_checkpoint = "google/flan-t5-small"
-model_checkpoint = "google/mt5-small"
+#model_checkpoint = "google/mt5-small"
+model_checkpoint = "google/mt5-base"
 
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 

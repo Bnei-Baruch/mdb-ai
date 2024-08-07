@@ -5,7 +5,7 @@ text = """
 from transformers import MT5Tokenizer, AutoModelForSeq2SeqLM
 
 model_checkpoint_fine_tuned = "./summ_he/checkpoint-1000"
-model_checkpoint = "google/mt5-small"
+model_checkpoint = "google/mt5-base"
 
 
 def run_summarization(t):
