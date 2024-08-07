@@ -5,11 +5,13 @@ text = """
 from transformers import MT5Tokenizer, AutoModelForSeq2SeqLM
 
 model_checkpoint_fine_tuned = "./summ_he/checkpoint-1000"
+model_checkpoint = "google/mt5-small"
 
 
 def run_summarization(t):
-    tokenizer = MT5Tokenizer.from_pretrained(model_checkpoint_fine_tuned)
+    tokenizer = MT5Tokenizer.from_pretrained(model_checkpoint_fine_tuned, max_seq_len=4096)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint_fine_tuned)
+    model_2 = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint)
 
     prefix = "summarize:"
     input_text = f"{prefix} {t}"
@@ -17,6 +19,7 @@ def run_summarization(t):
 
     outputs = model.generate(input_ids)
     print(tokenizer.decode(outputs[0]))
+    print(tokenizer.decode(model_2.generate(input_ids)[0]))
 
 
 run_summarization(text)
