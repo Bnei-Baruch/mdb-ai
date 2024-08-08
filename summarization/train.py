@@ -117,7 +117,7 @@ training_args = Seq2SeqTrainingArguments(
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     logging_steps=200,
-    output_dir="./summ_he",
+    output_dir="./summ_he_conditional",
     overwrite_output_dir=True,
     remove_unused_columns=False,
 )
