@@ -1,4 +1,4 @@
-from summarization.helper import connect_mdb
+from summarization.dataset.helper import connect_mdb
 
 QUERY = """
 SELECT f_art.uid, f_sum.uid 
