@@ -1,9 +1,6 @@
-import csv
 import json
-import os
-from urllib.request import urlopen, Request
 
-from bs4 import BeautifulSoup
+from summarization.helper import fetch_file
 
 
 class TextDataset:
@@ -28,11 +25,3 @@ class TextDataset:
         with open("../models/dataset.txt", 'w', encoding='utf8') as f:
             f.write(json.dumps(self.ds, ensure_ascii=False))
         print("Saved dataset")
-
-
-def fetch_file(uid):
-    url = f"{os.getenv('LINKER_URL')}/{uid}"
-    req = Request(url, headers={'Content-Type': 'text/html'})
-    html = urlopen(req).read()
-    txt = BeautifulSoup(html, 'html.parser')
-    return txt.string

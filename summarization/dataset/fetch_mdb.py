@@ -1,8 +1,4 @@
-import csv
-import os
-from urllib.parse import urlparse
-
-import psycopg2
+from summarization.helper import connect_mdb
 
 QUERY = """
 SELECT f_art.uid, f_sum.uid 
@@ -22,7 +18,7 @@ SELECT f_art.uid, f_sum.uid
 
 def run():
     print("Fetching dataset...")
-    conn = connect()
+    conn = connect_mdb()
     print("Connected to database")
     cursor = conn.cursor()
     cursor.execute(QUERY)
@@ -37,10 +33,3 @@ def row_to_dto(rows):
     for data in rows:
         res.append([data[0], data[1]])
     return res
-
-
-def connect():
-    mdb_str = os.getenv("MDB")
-    url = urlparse(mdb_str)
-    return psycopg2.connect(dbname=url.path[1:], user=url.username,
-                            password=url.password, host=url.hostname)

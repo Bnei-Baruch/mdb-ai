@@ -65,8 +65,7 @@ def preprocess_function(examples):
     inputs = [prefix + txt for txt in examples["article"]]
     model_inputs = tokenizer(inputs, max_length=max_input_length, truncation=True)
 
-    labels = tokenizer(text_target=examples["summary"], max_length=max_target_length,
-                       max_source_length=max_target_length, truncation=True)
+    labels = tokenizer(text_target=examples["summary"], max_length=max_target_length, truncation=True)
 
     model_inputs["labels"] = labels["input_ids"]
     return model_inputs
