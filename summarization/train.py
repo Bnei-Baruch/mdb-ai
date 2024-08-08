@@ -8,7 +8,7 @@ from datasets import Dataset
 from nltk.tokenize import sent_tokenize
 from peft import LoraConfig, TaskType, prepare_model_for_kbit_training, get_peft_model
 from transformers import MT5Tokenizer, BitsAndBytesConfig, Seq2SeqTrainingArguments, \
-    Seq2SeqTrainer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq
+    Seq2SeqTrainer, AutoModelForSeq2SeqLM, MT5ForConditionalGeneration, DataCollatorForSeq2Seq
 
 torch.cuda.empty_cache()
 
@@ -48,7 +48,7 @@ label_pad_token_id = -100
 batch_size = 1
 num_train_epochs = 8
 
-model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, quantization_config=q_config)
+model = MT5ForConditionalGeneration.from_pretrained(model_checkpoint, quantization_config=q_config)
 model = prepare_model_for_kbit_training(model)
 adapter_name_he = "summ_he"
 model.add_adapter(adapter_name=adapter_name_he, adapter_config=lora_config)
