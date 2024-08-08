@@ -3,8 +3,7 @@ from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 from transformers import MT5Tokenizer, AutoModelForSeq2SeqLM
 
-model_checkpoint_fine_tuned = "./summarization/summ_he/checkpoint-1000"
-model_checkpoint = "google/mt5-base"
+model_checkpoint_fine_tuned = "./summarization/summ_he_conditional/checkpoint-1000"
 
 
 def run_summarization(t):
