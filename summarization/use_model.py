@@ -1,3 +1,7 @@
+import os
+from urllib.request import Request, urlopen
+
+from bs4 import BeautifulSoup
 from transformers import MT5Tokenizer, AutoModelForSeq2SeqLM
 
 model_checkpoint_fine_tuned = "./summ_he/checkpoint-1000"
@@ -16,3 +20,12 @@ def run_summarization(t):
     outputs = model.generate(input_ids, num_beams=4, no_repeat_ngram_size=2, min_length=100, max_length=300)
     print(tokenizer.decode(outputs[0]))
     print(tokenizer.decode(model_2.generate(input_ids)[0]))
+
+
+if __name__ == '__main__':
+    uid = '0li0gUJa'
+    url = f"https://kabbalahmedia.info/assets/api/doc2text/{uid}"
+    req = Request(url, headers={'Content-Type': 'text/html'})
+    html = urlopen(req).read()
+    txt = BeautifulSoup(html, 'html.parser')
+    run_summarization(txt)
