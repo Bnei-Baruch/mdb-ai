@@ -12,7 +12,7 @@ from transformers import MT5Tokenizer, BitsAndBytesConfig, Seq2SeqTrainingArgume
 
 torch.cuda.empty_cache()
 
-with open('models/dataset.txt') as f:
+with open('./summarization/models/dataset.txt') as f:
     ds_data = f.read().replace("\\n", " ").replace("\\t", " ").replace("  ", " ")
     d = [x for x in json.loads(ds_data) if x["article"] is not None]
     ds = Dataset.from_list(d)
