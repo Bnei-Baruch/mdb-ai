@@ -8,7 +8,7 @@ from datasets import Dataset
 from nltk.tokenize import sent_tokenize
 from peft import LoraConfig, TaskType, prepare_model_for_kbit_training, get_peft_model
 from transformers import MT5Tokenizer, BitsAndBytesConfig, Seq2SeqTrainingArguments, \
-    Seq2SeqTrainer, AutoModelForSeq2SeqLM, MT5ForConditionalGeneration, DataCollatorForSeq2Seq
+    Seq2SeqTrainer, MT5ForConditionalGeneration, DataCollatorForSeq2Seq
 
 torch.cuda.empty_cache()
 
@@ -20,7 +20,8 @@ with open('./summarization/models/dataset.txt') as f:
     ds = ds.train_test_split(test_size=0.2)
 
 # model_checkpoint = "google/mt5-small"
-model_checkpoint = "google/mt5-base"
+# model_checkpoint = "google/mt5-base"
+model_checkpoint = "google/mt5-large"
 
 tokenizer = MT5Tokenizer.from_pretrained(model_checkpoint)
 
@@ -117,7 +118,7 @@ training_args = Seq2SeqTrainingArguments(
     per_device_train_batch_size=batch_size,
     per_device_eval_batch_size=batch_size,
     logging_steps=200,
-    output_dir="./summ_he_conditional",
+    output_dir="./summ_he_large",
     overwrite_output_dir=True,
     remove_unused_columns=False,
 )
