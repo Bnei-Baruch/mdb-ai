@@ -22,4 +22,6 @@ pip-selfcheck.json
 .env
 
 **/models/*
+!**/models/adapt_model.py
+!**/models/rut5-base/*
 /summarization/summ_he
