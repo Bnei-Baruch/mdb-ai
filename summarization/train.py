@@ -21,7 +21,8 @@ with open('./summarization/models/dataset.txt') as f:
 
 # model_checkpoint = "google/mt5-small"
 # model_checkpoint = "google/mt5-base"
-model_checkpoint = "google/mt5-large"
+# model_checkpoint = "google/mt5-large"
+model_checkpoint = "./summarization/models/he_t5_cut"
 
 tokenizer = MT5Tokenizer.from_pretrained(model_checkpoint)
 
