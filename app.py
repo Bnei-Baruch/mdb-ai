@@ -31,7 +31,7 @@ def add_header(response):
     return response
 
 
-@app.route('/stt', methods=['POST'])
+@app.route('/stt', methods=['POST', 'GET'])
 def stt():
     print("stt run")
     return handle_stt()

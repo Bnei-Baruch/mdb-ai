@@ -5,8 +5,8 @@ import csv
 from collections import Counter
 from tqdm.auto import tqdm, trange
 
-tokenizer = T5Tokenizer.from_pretrained("google/mt5-base")
-model = T5ForConditionalGeneration.from_pretrained('google/mt5-base')
+tokenizer = T5Tokenizer.from_pretrained("google/mt5-large")
+model = T5ForConditionalGeneration.from_pretrained('google/mt5-large')
 df_ru = pd.read_csv('./heb_wikipedia_2021_10K/heb_wikipedia_2021_10K-sentences.txt', sep='\t', header=None,
                     quoting=csv.QUOTE_NONE)
 df_ru.columns = ['idx', 'text']
@@ -21,7 +21,7 @@ new_tokens = set(range(1000))
 #         new_tokens.add(k)
 for i, (k, v) in enumerate(cnt_ru.most_common(25_000)):
     if len(new_tokens) == 29_900:
-        print(i, 'Russan tokens are included')
+        print(i, 'hebrew tokens are included')
         break
     if k not in new_tokens:
         new_tokens.add(k)
