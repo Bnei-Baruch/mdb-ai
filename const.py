@@ -1,6 +1,6 @@
 MODEL_BY_LANG = {
     'en': 'large-v3',
-    'he': 'ct2-large',
+    'he': 'models/ct2-large',
     'ru': 'large-v2'
 }
 
