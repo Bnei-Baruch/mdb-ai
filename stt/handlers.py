@@ -37,7 +37,6 @@ def stt_from_url(url, lang):
     print("from_url", url, lang)
     urlretrieve(url, AUDIO_PATH)
     word_timestamp = transcriber(lang)
-    # word_timestamp = transcriber_on_side(url, lang)
     if 'tr_only' in request.values:
         return word_timestamp
 

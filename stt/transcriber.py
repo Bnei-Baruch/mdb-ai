@@ -23,16 +23,3 @@ def transcriber(lang):
             idx += 1
     print("segments to object end")
     return results
-
-
-def transcriber_on_side(url, lang):
-    mock_path = r"/Users/davgur/PycharmProjects/mdb-ai/mock.json"
-    if os.path.exists(mock_path):
-        with open(mock_path, 'r') as f:
-            return json.loads(f.read())
-    params = {'lang': lang, 'url': url, 'tr_only': True}
-    r = requests.get("http://10.65.4.100:5000/stt", params=params)
-    j = json.loads(r.content)
-    with open(mock_path, 'w') as out_f:
-        json.dump(j, out_f)
-    return j

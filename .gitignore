@@ -21,3 +21,5 @@ pip-selfcheck.json
 
 models/
 .env
+tt/.DS_Store
+.DS_Store
