@@ -23,3 +23,6 @@ models/
 .env
 tt/.DS_Store
 .DS_Store
+
+*.log
+*.pid
